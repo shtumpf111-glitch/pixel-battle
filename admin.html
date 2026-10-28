@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pixel Battle | Админ-панель</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: #f2f4f8;
+      color: #172033;
+    }
+    main {
+      max-width: 650px;
+      margin: 40px auto;
+      padding: 24px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 8px 30px #00000012;
+    }
+    h1 { margin-top: 0; }
+    .status {
+      padding: 16px;
+      border-radius: 10px;
+      background: #eef2ff;
+      margin: 12px 0;
+      overflow-wrap: anywhere;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: #315efb;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    a { color: #315efb; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Pixel Battle: админ-панель</h1>
+    <p>Страница для проверки состояния сайта.</p>
+
+    <div class="status" id="siteStatus">Проверяем доступность сайта...</div>
+    <div class="status" id="dbStatus">Подключение к базе данных нужно настроить.</div>
+
+    <button id="checkButton">Проверить снова</button>
+    <p><a href="/">← Вернуться к Pixel Battle</a></p>
+  </main>
+
+  <script>
+    const siteStatus = document.getElementById("siteStatus");
+    const dbStatus = document.getElementById("dbStatus");
+    const checkButton = document.getElementById("checkButton");
+
+    async function checkSite() {
+      checkButton.disabled = true;
+      siteStatus.textContent = "Проверяем сайт...";
+      dbStatus.textContent = "Для проверки базы нужно добавить настройки подключения.";
+
+      try {
+        const response = await fetch("/", { cache: "no-store" });
+        siteStatus.textContent = response.ok
+          ? "Сайт доступен. HTTP " + response.status
+          : "Сайт ответил с ошибкой. HTTP " + response.status;
+      } catch (error) {
+        siteStatus.textContent = "Не удалось проверить сайт: " + error.message;
+      } finally {
+        checkButton.disabled = false;
+      }
+    }
+
+    checkButton.addEventListener("click", checkSite);
+    checkSite();
+  </script>
+</body>
+</html>
